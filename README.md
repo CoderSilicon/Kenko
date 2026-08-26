@@ -1,36 +1,29 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+![](./public/kenko.png)
+# Kenko · 健康
 
-## Getting Started
+**Your Assistant for Instant Health Insights & Guidance**
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+> **Kenko** helps turn health uncertainty into clear answers. By combining what you feel, what you see on your skin, photo uploads, and your own guesses, Kenko checks your symptoms against medical knowledge to give you quick, understandable advice.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### How It Works
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+* **Simple Inputs:** Enter how you feel, select skin conditions (like dryness or redness), and type what you think might be wrong.
+* **Photo Scanning:** Upload a clear picture of a rash, skin issue, or throat area for quick visual checking.
+* **Fact-Checking Your Thoughts:** Tells you directly if your personal guess makes sense based on your actual symptoms.
+* **Instant, Organized Results:** Get easy-to-read cards showing what might be going on without confusing medical jargon.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+### What You Get
 
-To learn more about Next.js, take a look at the following resources:
+* **Smart Symptom Match:** Connects what you feel with physical signs like skin moisture or color changes.
+* **Possible Conditions List:** See a ranked list of likely issues, highlighting which signs match and which ones don't.
+* **Clear Next Steps:** Know exactly what level of care you need (Rest at Home, See a Doctor, or Visit Urgent Care).
+* **Questions for Your Doctor:** Auto-generates a list of tailored questions to bring to your next medical appointment.
+* **Emergency Warnings:** Immediately flags dangerous symptoms and tells you if you should call emergency services right away.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+> **Disclaimer:** Kenko is an AI tool. It is not a certified doctor and cannot give official medical diagnoses or treatments. Serious symptoms will trigger immediate emergency warnings. Always consult a real medical professional if you feel unwell.
