@@ -296,7 +296,7 @@ export default function KenkoWizard({
       </div>
 
       {/* Step Content */}
-      <div className="min-h-[320px]">
+      <div className="min-h-80">
         {step === 0 && <StepBasic data={data} update={update} />}
         {step === 1 && (
           <StepLocation

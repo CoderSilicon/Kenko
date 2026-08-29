@@ -174,7 +174,7 @@ export default function Home() {
         {stage === "intro" && (
           <div className="w-full animate-in fade-in duration-500">
             {/* Hero */}
-            <div className="w-full border-b border-[#e8e4df] bg-gradient-to-b from-[#f0ece6] to-[#faf8f5] px-6 py-20 md:px-16 md:py-28">
+            <div className="w-full border-b border-[#e8e4df] bg-linear-to-b from-[#f0ece6] to-[#faf8f5] px-6 py-20 md:px-16 md:py-28">
               <div className="max-w-3xl">
                 <p className="mb-6 inline-flex items-center gap-3 text-[10px] font-medium tracking-[0.3em] text-[#8a8278] uppercase">
                   <span className="h-px w-10 bg-[#8a8278]" />

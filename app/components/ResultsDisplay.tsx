@@ -97,7 +97,7 @@ function SeverityGauge({ triageLevel }: { triageLevel: string }) {
             strokeLinecap="round"
             strokeDasharray={circumference}
             strokeDashoffset={offset}
-            className={`${config.ring} transition-all duration-[1200ms] ease-out`}
+            className={`${config.ring} transition-all duration-1200 ease-out`}
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
