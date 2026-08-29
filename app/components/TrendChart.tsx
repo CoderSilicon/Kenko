@@ -48,7 +48,7 @@ export default function TrendChart({ points }: { points: TrendPoint[] }) {
           x2={W - PADX}
           y1={y(s)}
           y2={y(s)}
-          stroke={s === 5 ? "#d4c8bc" : "#ece8e2"}
+          stroke={s === 5 ? "#d9d6cf" : "#efede8"}
           strokeWidth="1"
         />
       ))}
@@ -58,7 +58,7 @@ export default function TrendChart({ points }: { points: TrendPoint[] }) {
           x={PADX - 8}
           y={y(s) + 3}
           textAnchor="end"
-          className="fill-[#b8b0a6]"
+          className="fill-[#b9b6ae]"
           fontSize="9"
         >
           {s}
@@ -67,8 +67,8 @@ export default function TrendChart({ points }: { points: TrendPoint[] }) {
       <path
         d={path}
         fill="none"
-        stroke="#2c2c2c"
-        strokeWidth="1.5"
+        stroke="#108463"
+        strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -77,15 +77,17 @@ export default function TrendChart({ points }: { points: TrendPoint[] }) {
           key={p.date}
           cx={x(p.date)}
           cy={y(p.severity)}
-          r={p.date === maxDate ? 4 : 3}
-          fill={p.date === maxDate ? "#2c2c2c" : "#8a8278"}
+          r={p.date === maxDate ? 4.5 : 3.5}
+          fill={p.date === maxDate ? "#0b614a" : "#108463"}
+          className="stroke-white"
+          strokeWidth={p.date === maxDate ? 1.5 : 0}
         >
           <title>
             {formatDate(p.date)} — {p.severity}/10
           </title>
         </circle>
       ))}
-      <text x={PADX} y={H - 4} className="fill-[#b8b0a6]" fontSize="9">
+      <text x={PADX} y={H - 4} className="fill-[#b9b6ae]" fontSize="9">
         {formatDate(minDate)}
       </text>
       {span > 0 && (
@@ -93,7 +95,7 @@ export default function TrendChart({ points }: { points: TrendPoint[] }) {
           x={W - PADX}
           y={H - 4}
           textAnchor="end"
-          className="fill-[#b8b0a6]"
+          className="fill-[#b9b6ae]"
           fontSize="9"
         >
           {formatDate(maxDate)}

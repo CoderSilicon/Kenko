@@ -261,42 +261,34 @@ export default function KenkoWizard({
   return (
     <div className="w-full">
       {/* Progress */}
-      <div className="mb-10">
-        <div className="mb-4 flex items-center justify-between">
-          <span className="text-[10px] font-medium tracking-[0.3em] text-[#2c2c2c] uppercase">
+      <div className="mb-8">
+        <div className="mb-3 flex items-center justify-between">
+          <span className="text-xs font-semibold text-ink">
             Step {step + 1} of {TOTAL_STEPS}
           </span>
-          <span className="text-[10px] font-light tracking-wider text-[#b8b0a6]">
-            {Math.round(progress)}%
+          <span className="text-xs font-medium text-muted">
+            {Math.round(progress)}% complete
           </span>
         </div>
 
-        {/* Step indicator */}
-        <div className="mb-4 flex items-center gap-1.5">
+        <div className="flex items-center gap-1.5">
           {Array.from({ length: TOTAL_STEPS }, (_, i) => (
             <span
               key={`step-segment-${i + 1}`}
-              className={`h-1 flex-1 rounded-full transition-colors duration-300 ${
+              className={`h-1.5 flex-1 rounded-full transition-colors duration-300 ${
                 i < step
-                  ? "bg-[#2c2c2c]"
+                  ? "bg-accent"
                   : i === step
-                    ? "bg-[#8a8278]"
-                    : "bg-[#e8e4df]"
+                    ? "bg-accent-strong"
+                    : "bg-line-soft"
               }`}
             />
           ))}
         </div>
-
-        <div className="h-px w-full bg-[#e8e4df]">
-          <div
-            className="h-full bg-[#2c2c2c] transition-all duration-500 ease-out"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
       </div>
 
       {/* Step Content */}
-      <div className="min-h-80">
+      <div className="min-h-[22rem] sm:min-h-[20rem]">
         {step === 0 && <StepBasic data={data} update={update} />}
         {step === 1 && (
           <StepLocation
@@ -330,16 +322,14 @@ export default function KenkoWizard({
       </div>
 
       {/* Navigation */}
-      <div className="mt-10 flex items-center justify-between">
+      <div className="mt-10 flex items-center justify-between gap-3 border-t border-line-soft pt-6">
         <button
           type="button"
           onClick={handleBack}
           disabled={step === 0}
-          className="group inline-flex items-center gap-2 text-xs font-medium tracking-[0.2em] text-[#8a8278] uppercase transition-colors hover:text-[#2c2c2c] disabled:cursor-not-allowed disabled:opacity-0"
+          className="k-btn-ghost px-5 py-3 disabled:invisible"
         >
-          <span className="transition-transform group-hover:-translate-x-0.5">
-            ←
-          </span>
+          <span aria-hidden="true">←</span>
           Back
         </button>
 
@@ -347,12 +337,12 @@ export default function KenkoWizard({
           type="button"
           onClick={handleNext}
           disabled={!canAdvance() || isLoading}
-          className="group inline-flex items-center justify-center gap-3 border border-[#2c2c2c] bg-[#2c2c2c] px-10 py-3.5 text-xs font-semibold tracking-[0.25em] text-[#faf8f5] uppercase transition-all hover:bg-[#3d3d3d] disabled:cursor-not-allowed disabled:opacity-30"
+          className="k-btn px-8 py-3"
         >
           {isLoading ? (
-            <span className="inline-flex items-center gap-3">
+            <span className="inline-flex items-center gap-2.5">
               <svg
-                className="h-3.5 w-3.5 animate-spin"
+                className="h-4 w-4 animate-spin"
                 viewBox="0 0 24 24"
                 fill="none"
                 role="img"
@@ -360,34 +350,30 @@ export default function KenkoWizard({
               >
                 <title>Loading</title>
                 <circle
-                  className="opacity-25"
+                  className="opacity-30"
                   cx="12"
                   cy="12"
                   r="10"
                   stroke="currentColor"
-                  strokeWidth="2"
+                  strokeWidth="3"
                 />
                 <path
-                  className="opacity-75"
+                  className="opacity-90"
                   fill="currentColor"
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                 />
               </svg>
-              <span className="tracking-[0.25em]">Analyzing</span>
+              Analyzing
             </span>
           ) : step === TOTAL_STEPS - 1 ? (
             <span>
               Evaluate
-              <span className="transition-transform group-hover:translate-x-1">
-                {" →"}
-              </span>
+              <span aria-hidden="true"> {" →"}</span>
             </span>
           ) : (
             <span>
               Continue
-              <span className="transition-transform group-hover:translate-x-1">
-                {" →"}
-              </span>
+              <span aria-hidden="true"> {" →"}</span>
             </span>
           )}
         </button>
@@ -398,6 +384,15 @@ export default function KenkoWizard({
 
 /* ─── Step Components ─── */
 
+function StepHeader({ title, subtitle }: { title: string; subtitle?: string }) {
+  return (
+    <div className="mb-6">
+      <h2 className="text-xl font-semibold tracking-tight">{title}</h2>
+      {subtitle ? <p className="mt-1 text-sm text-muted">{subtitle}</p> : null}
+    </div>
+  );
+}
+
 function StepBasic({
   data,
   update,
@@ -407,18 +402,13 @@ function StepBasic({
 }) {
   return (
     <div>
-      <h2 className="mb-2 text-lg font-light text-[#2c2c2c]">
-        What&apos;s bothering you?
-      </h2>
-      <p className="mb-6 text-xs font-light text-[#a09890]">
-        Describe your main complaint in your own words.
-      </p>
+      <StepHeader title="What&apos;s bothering you?" />
       <textarea
         value={data.symptoms}
         onChange={(e) => update("symptoms", e.target.value)}
-        rows={4}
+        rows={5}
         placeholder="e.g., I have a throbbing headache on the right side that started yesterday..."
-        className="w-full border-b border-[#d4c8bc] bg-transparent px-0 py-3 text-sm font-light text-[#2c2c2c] placeholder-[#c4bbb0] transition-colors focus:border-[#8a8278] focus:outline-none"
+        className="k-input resize-none leading-relaxed"
       />
     </div>
   );
@@ -435,12 +425,7 @@ function StepLocation({
 }) {
   return (
     <div>
-      <h2 className="mb-2 text-lg font-light text-[#2c2c2c]">
-        Where on your body?
-      </h2>
-      <p className="mb-6 text-xs font-light text-[#a09890]">
-        Select all that apply.
-      </p>
+      <StepHeader title="Where on your body?" />
       <div className="flex flex-wrap gap-2">
         {BODY_LOCATIONS.map((loc) => {
           const active = data.bodyLocation.includes(loc);
@@ -449,24 +434,20 @@ function StepLocation({
               key={loc}
               type="button"
               onClick={() => toggleArrayItem("bodyLocation", loc)}
-              className={`border px-4 py-2 text-xs font-light tracking-wider transition-colors ${
-                active
-                  ? "border-[#2c2c2c] bg-[#2c2c2c] text-[#faf8f5]"
-                  : "border-[#d4c8bc] bg-transparent text-[#6b6259] hover:border-[#8a8278]"
-              }`}
+              className={`k-chip ${active ? "k-chip-on" : "k-chip-off"}`}
             >
               {loc}
             </button>
           );
         })}
       </div>
-      <div className="mt-4">
+      <div className="mt-5">
         <input
           type="text"
           value={data.bodyLocationOther}
           onChange={(e) => update("bodyLocationOther", e.target.value)}
           placeholder="Other location..."
-          className="w-full border-b border-[#d4c8bc] bg-transparent px-0 py-3 text-sm font-light text-[#2c2c2c] placeholder-[#c4bbb0] focus:border-[#8a8278] focus:outline-none"
+          className="k-input"
         />
       </div>
     </div>
@@ -482,13 +463,8 @@ function StepOnset({
 }) {
   return (
     <div>
-      <h2 className="mb-2 text-lg font-light text-[#2c2c2c]">
-        How did it start?
-      </h2>
-      <p className="mb-6 text-xs font-light text-[#a09890]">
-        Choose the option that best describes the onset.
-      </p>
-      <div className="space-y-3">
+      <StepHeader title="How did it start?" />
+      <div className="space-y-2.5">
         {ONSET_OPTIONS.map((opt) => {
           const active = data.onset === opt.value;
           return (
@@ -499,18 +475,25 @@ function StepOnset({
                 update("onset", opt.value);
                 update("onsetOther", "");
               }}
-              className={`w-full border p-4 text-left transition-colors ${
+              className={`flex w-full items-center justify-between gap-4 rounded-xl border p-4 text-left transition-all ${
                 active
-                  ? "border-[#2c2c2c] bg-[#f0ece6]"
-                  : "border-[#e8e4df] bg-transparent hover:border-[#b8b0a6]"
+                  ? "border-accent bg-accent-soft/60 ring-1 ring-accent"
+                  : "border-line bg-white hover:border-accent"
               }`}
             >
-              <span className="text-sm font-medium text-[#2c2c2c]">
-                {opt.label}
+              <span className="flex items-center gap-3">
+                <span
+                  className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
+                    active ? "border-accent bg-accent" : "border-faint bg-white"
+                  }`}
+                >
+                  {active && (
+                    <span className="h-1.5 w-1.5 rounded-full bg-white" />
+                  )}
+                </span>
+                <span className="text-sm font-semibold">{opt.label}</span>
               </span>
-              <span className="ml-3 text-xs font-light text-[#a09890]">
-                {opt.desc}
-              </span>
+              <span className="text-xs font-normal text-muted">{opt.desc}</span>
             </button>
           );
         })}
@@ -523,7 +506,7 @@ function StepOnset({
               if (e.target.value) update("onset", "");
             }}
             placeholder="Other description..."
-            className="w-full border-b border-[#d4c8bc] bg-transparent px-0 py-3 text-sm font-light text-[#2c2c2c] placeholder-[#c4bbb0] focus:border-[#8a8278] focus:outline-none"
+            className="k-input mt-1"
           />
         </div>
       </div>
@@ -540,12 +523,7 @@ function StepDuration({
 }) {
   return (
     <div>
-      <h2 className="mb-2 text-lg font-light text-[#2c2c2c]">
-        How long has this been going on?
-      </h2>
-      <p className="mb-6 text-xs font-light text-[#a09890]">
-        Select the closest duration.
-      </p>
+      <StepHeader title="How long has this been going on?" />
       <div className="space-y-2">
         {DURATION_OPTIONS.map((dur) => {
           const active = data.duration === dur;
@@ -557,10 +535,10 @@ function StepDuration({
                 update("duration", dur);
                 update("durationOther", "");
               }}
-              className={`w-full border p-3 text-left text-sm font-light transition-colors ${
+              className={`w-full rounded-xl border p-3.5 text-left text-sm font-medium transition-all ${
                 active
-                  ? "border-[#2c2c2c] bg-[#f0ece6] text-[#2c2c2c]"
-                  : "border-[#e8e4df] bg-transparent text-[#6b6259] hover:border-[#b8b0a6]"
+                  ? "border-accent bg-accent-soft/60 text-ink ring-1 ring-accent"
+                  : "border-line bg-white text-body hover:border-accent hover:text-ink"
               }`}
             >
               {dur}
@@ -576,7 +554,7 @@ function StepDuration({
               if (e.target.value) update("duration", "");
             }}
             placeholder="Other duration..."
-            className="w-full border-b border-[#d4c8bc] bg-transparent px-0 py-3 text-sm font-light text-[#2c2c2c] placeholder-[#c4bbb0] focus:border-[#8a8278] focus:outline-none"
+            className="k-input mt-1"
           />
         </div>
       </div>
@@ -593,18 +571,12 @@ function StepSeverity({
 }) {
   return (
     <div>
-      <h2 className="mb-2 text-lg font-light text-[#2c2c2c]">
-        How severe is it?
-      </h2>
-      <p className="mb-8 text-xs font-light text-[#a09890]">
-        Drag the slider or tap a number.
-      </p>
-
+      <StepHeader title="How severe is it?" />
       <div className="text-center">
-        <span className="mb-6 block text-5xl font-light text-[#2c2c2c]">
+        <span className="mb-1 block text-5xl font-semibold tracking-tight">
           {data.severity}
         </span>
-        <span className="mb-8 block text-xs font-light tracking-wider text-[#8a8278]">
+        <span className="mb-8 block text-sm font-medium text-muted">
           {SEVERITY_LABELS[data.severity]}
         </span>
       </div>
@@ -615,7 +587,7 @@ function StepSeverity({
         max={10}
         value={data.severity}
         onChange={(e) => update("severity", Number(e.target.value))}
-        className="mx-auto mb-6 block w-full max-w-md accent-[#2c2c2c]"
+        className="mx-auto mb-7 block w-full max-w-md accent-accent"
       />
 
       <div className="mx-auto grid max-w-md grid-cols-5 gap-2">
@@ -624,10 +596,10 @@ function StepSeverity({
             key={n}
             type="button"
             onClick={() => update("severity", n)}
-            className={`py-2 text-xs font-light transition-colors ${
+            className={`h-11 rounded-full text-sm font-medium transition-all ${
               data.severity === n
-                ? "border border-[#2c2c2c] bg-[#2c2c2c] text-[#faf8f5]"
-                : "border border-[#e8e4df] text-[#6b6259] hover:border-[#b8b0a6]"
+                ? "bg-accent text-white shadow-sm"
+                : "border border-line bg-white text-body hover:border-accent hover:text-ink"
             }`}
           >
             {n}
@@ -649,12 +621,7 @@ function StepAssociated({
 }) {
   return (
     <div>
-      <h2 className="mb-2 text-lg font-light text-[#2c2c2c]">
-        Anything else you&apos;re feeling?
-      </h2>
-      <p className="mb-6 text-xs font-light text-[#a09890]">
-        Select any other symptoms. Skip if none.
-      </p>
+      <StepHeader title="Anything else you&apos;re feeling?" />
       <div className="flex flex-wrap gap-2">
         {ASSOCIATED_SYMPTOMS.map((sym) => {
           const active = data.associatedSymptoms.includes(sym);
@@ -663,27 +630,40 @@ function StepAssociated({
               key={sym}
               type="button"
               onClick={() => toggleArrayItem("associatedSymptoms", sym)}
-              className={`border px-3 py-1.5 text-xs font-light tracking-wider transition-colors ${
-                active
-                  ? "border-[#2c2c2c] bg-[#2c2c2c] text-[#faf8f5]"
-                  : "border-[#d4c8bc] bg-transparent text-[#6b6259] hover:border-[#8a8278]"
-              }`}
+              className={`k-chip ${active ? "k-chip-on" : "k-chip-off"}`}
             >
               {sym}
             </button>
           );
         })}
       </div>
-      <div className="mt-4">
+      <div className="mt-5">
         <input
           type="text"
           value={data.associatedSymptomsOther}
           onChange={(e) => update("associatedSymptomsOther", e.target.value)}
           placeholder="Other symptom..."
-          className="w-full border-b border-[#d4c8bc] bg-transparent px-0 py-3 text-sm font-light text-[#2c2c2c] placeholder-[#c4bbb0] focus:border-[#8a8278] focus:outline-none"
+          className="k-input"
         />
       </div>
     </div>
+  );
+}
+
+function FieldLabel({
+  htmlFor,
+  children,
+}: {
+  htmlFor: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <label
+      htmlFor={htmlFor}
+      className="mb-1.5 block text-xs font-semibold tracking-wide text-muted uppercase"
+    >
+      {children}
+    </label>
   );
 }
 
@@ -696,21 +676,14 @@ function StepHistory({
 }) {
   return (
     <div>
-      <h2 className="mb-2 text-lg font-light text-[#2c2c2c]">
-        Anything relevant about you?
-      </h2>
-      <p className="mb-6 text-xs font-light text-[#a09890]">
-        Medications, allergies, conditions, recent travel. Skip if none.
-      </p>
+      <StepHeader
+        title="Anything relevant about you?"
+        subtitle="Medications, allergies, conditions, travel — skip what doesn&apos;t apply."
+      />
 
-      <div className="space-y-6">
+      <div className="space-y-5">
         <div>
-          <label
-            htmlFor="wiz-meds"
-            className="mb-2 block text-[10px] font-medium tracking-wider text-[#b8b0a6] uppercase"
-          >
-            Medications
-          </label>
+          <FieldLabel htmlFor="wiz-meds">Medications</FieldLabel>
           <input
             id="wiz-meds"
             type="text"
@@ -721,16 +694,11 @@ function StepHistory({
               update("medicalHistory", parts.join("|"));
             }}
             placeholder="e.g., Ibuprofen, Metformin"
-            className="w-full border-b border-[#d4c8bc] bg-transparent px-0 py-3 text-sm font-light text-[#2c2c2c] placeholder-[#c4bbb0] focus:border-[#8a8278] focus:outline-none"
+            className="k-input"
           />
         </div>
         <div>
-          <label
-            htmlFor="wiz-allergies"
-            className="mb-2 block text-[10px] font-medium tracking-wider text-[#b8b0a6] uppercase"
-          >
-            Allergies
-          </label>
+          <FieldLabel htmlFor="wiz-allergies">Allergies</FieldLabel>
           <input
             id="wiz-allergies"
             type="text"
@@ -741,16 +709,11 @@ function StepHistory({
               update("medicalHistory", parts.join("|"));
             }}
             placeholder="e.g., Penicillin, Peanuts"
-            className="w-full border-b border-[#d4c8bc] bg-transparent px-0 py-3 text-sm font-light text-[#2c2c2c] placeholder-[#c4bbb0] focus:border-[#8a8278] focus:outline-none"
+            className="k-input"
           />
         </div>
         <div>
-          <label
-            htmlFor="wiz-conditions"
-            className="mb-2 block text-[10px] font-medium tracking-wider text-[#b8b0a6] uppercase"
-          >
-            Existing conditions
-          </label>
+          <FieldLabel htmlFor="wiz-conditions">Existing conditions</FieldLabel>
           <input
             id="wiz-conditions"
             type="text"
@@ -761,23 +724,18 @@ function StepHistory({
               update("medicalHistory", parts.join("|"));
             }}
             placeholder="e.g., Diabetes, Hypertension"
-            className="w-full border-b border-[#d4c8bc] bg-transparent px-0 py-3 text-sm font-light text-[#2c2c2c] placeholder-[#c4bbb0] focus:border-[#8a8278] focus:outline-none"
+            className="k-input"
           />
         </div>
         <div>
-          <label
-            htmlFor="wiz-vitals"
-            className="mb-2 block text-[10px] font-medium tracking-wider text-[#b8b0a6] uppercase"
-          >
-            Skin type & vitals
-          </label>
+          <FieldLabel htmlFor="wiz-vitals">Skin type &amp; vitals</FieldLabel>
           <textarea
             id="wiz-vitals"
             value={data.skinContext}
             onChange={(e) => update("skinContext", e.target.value)}
             rows={2}
             placeholder="e.g., Dry skin, temp 37.2°C, BP 130/85"
-            className="w-full border-b border-[#d4c8bc] bg-transparent px-0 py-3 text-sm font-light text-[#2c2c2c] placeholder-[#c4bbb0] focus:border-[#8a8278] focus:outline-none"
+            className="k-input resize-none"
           />
         </div>
       </div>
@@ -802,10 +760,7 @@ function StepPhoto({
 }) {
   return (
     <div>
-      <h2 className="mb-2 text-lg font-light text-[#2c2c2c]">Any photos?</h2>
-      <p className="mb-6 text-xs font-light text-[#a09890]">
-        Upload images of the affected area. Skip if not applicable.
-      </p>
+      <StepHeader title="Any photos?" />
 
       <button
         type="button"
@@ -824,46 +779,45 @@ function StepPhoto({
           handleFiles(e.dataTransfer.files);
         }}
         onClick={() => fileInputRef.current?.click()}
-        className={`group w-full cursor-pointer border border-dashed px-6 py-10 text-center transition-colors ${
+        className={`group flex w-full cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed px-6 py-12 text-center transition-colors ${
           isDragging
-            ? "border-[#8a8278] bg-[#f0ece6]"
-            : "border-[#d4c8bc] bg-transparent hover:border-[#b8b0a6] hover:bg-[#faf8f5]"
+            ? "border-accent bg-accent-soft/50"
+            : "border-line bg-white hover:border-accent hover:bg-soft"
         }`}
       >
-        <svg
-          className="mx-auto mb-3 h-6 w-6 text-[#b8b0a6] transition-colors group-hover:text-[#8a8278]"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1}
-          stroke="currentColor"
-          role="img"
-          aria-label="Upload photo"
-        >
-          <title>Upload photo</title>
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z"
-          />
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0Z"
-          />
-        </svg>
-        <p className="text-xs font-light text-[#8a8278]">
+        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-accent-soft transition-colors group-hover:bg-accent">
+          <svg
+            className="h-6 w-6 text-accent-strong transition-colors group-hover:text-white"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            role="img"
+            aria-label="Upload photo"
+          >
+            <title>Upload photo</title>
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z"
+            />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0Z"
+            />
+          </svg>
+        </span>
+        <p className="mt-4 text-sm font-medium">
           {isDragging ? (
             "Drop image here"
           ) : (
             <>
-              Drag a photo or{" "}
-              <span className="font-medium text-[#6b6259]">browse</span>
+              Drag a photo or <span className="text-accent-strong">browse</span>
             </>
           )}
         </p>
-        <p className="mt-1 text-[10px] font-light text-[#b8b0a6]">
-          JPG, PNG, WebP — up to 10MB
-        </p>
+        <p className="mt-1 text-xs text-muted">JPG, PNG, WebP — up to 10MB</p>
       </button>
 
       <input
@@ -876,11 +830,11 @@ function StepPhoto({
       />
 
       {data.images.length > 0 && (
-        <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-4">
+        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {data.images.map((img, i) => (
             <div
               key={img.preview}
-              className="group relative border border-[#e8e4df]"
+              className="group relative overflow-hidden rounded-xl border border-line"
             >
               {/* biome-ignore lint/performance/noImgElement: blob URL preview */}
               <img
@@ -891,16 +845,14 @@ function StepPhoto({
               <button
                 type="button"
                 onClick={() => removeImage(i)}
-                className="absolute top-1.5 right-1.5 flex h-5 w-5 items-center justify-center bg-[#2c2c2c] text-[8px] text-[#faf8f5] opacity-0 transition-opacity group-hover:opacity-100"
+                className="absolute top-2 right-2 flex h-6 w-6 items-center justify-center rounded-full bg-ink/70 text-sm text-white opacity-0 transition-opacity group-hover:opacity-100"
                 aria-label={`Remove ${img.name}`}
               >
-                x
+                ×
               </button>
-              <div className="px-2 py-1.5">
-                <p className="truncate text-[9px] font-light text-[#b8b0a6]">
-                  {img.name}
-                </p>
-              </div>
+              <p className="truncate px-2.5 py-1.5 text-[11px] font-medium text-muted">
+                {img.name}
+              </p>
             </div>
           ))}
         </div>
@@ -918,18 +870,16 @@ function StepHypothesis({
 }) {
   return (
     <div>
-      <h2 className="mb-2 text-lg font-light text-[#2c2c2c]">
-        What do you think it might be?
-      </h2>
-      <p className="mb-6 text-xs font-light text-[#a09890]">
-        Your guess — Kenko will evaluate it objectively. Skip if unsure.
-      </p>
+      <StepHeader
+        title="What do you think it might be?"
+        subtitle="Optional — skip if you&apos;re not sure."
+      />
       <input
         type="text"
         value={data.hypothesis}
         onChange={(e) => update("hypothesis", e.target.value)}
         placeholder="e.g., Migraine, eczema, food poisoning..."
-        className="w-full border-b border-[#d4c8bc] bg-transparent px-0 py-3 text-sm font-light text-[#2c2c2c] placeholder-[#c4bbb0] transition-colors focus:border-[#8a8278] focus:outline-none"
+        className="k-input"
       />
     </div>
   );

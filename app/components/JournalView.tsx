@@ -19,22 +19,25 @@ interface JournalViewProps {
 
 const CHANGE_STYLES: Record<
   CheckIn["change"],
-  { label: string; color: string; bg: string }
+  { label: string; tint: string; text: string; active: string }
 > = {
   better: {
     label: "Better",
-    color: "text-[#5a7a5a]",
-    bg: "bg-[#eef3ee] border-[#c8d8c8]",
+    tint: "bg-success-soft text-success",
+    text: "text-success",
+    active: "border-success bg-success text-white",
   },
   same: {
     label: "Same",
-    color: "text-[#8a7a4a]",
-    bg: "bg-[#f5f0e6] border-[#d8d0b8]",
+    tint: "bg-warning-soft text-warning",
+    text: "text-warning",
+    active: "border-warning bg-warning text-white",
   },
   worse: {
     label: "Worse",
-    color: "text-[#8a3a3a]",
-    bg: "bg-[#f5eaea] border-[#d8c0b8]",
+    tint: "bg-danger-soft text-danger",
+    text: "text-danger",
+    active: "border-danger bg-danger text-white",
   },
 };
 
@@ -95,29 +98,29 @@ function EntryCard({
   }
 
   return (
-    <div className="border border-[#e8e4df] bg-[#faf8f5]">
+    <div className="k-card overflow-hidden">
       {/* Card header */}
-      <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[#e8e4df] px-6 py-5 md:px-8">
+      <div className="flex flex-wrap items-start justify-between gap-3 px-5 py-5 sm:px-6">
         <div>
-          <p className="text-[10px] font-light tracking-wider text-[#a09890]">
+          <p className="text-xs font-medium text-muted">
             {formatDate(entry.createdAt)}
             {days > 0 && ` · tracked ${days}d`}
           </p>
-          <h2 className="mt-1 text-lg font-light tracking-tight text-[#2c2c2c]">
+          <h2 className="mt-1 text-lg font-semibold tracking-tight">
             {entry.label}
           </h2>
           {entry.conditionName && (
-            <p className="mt-1 text-xs font-light text-[#8a8278]">
+            <p className="mt-0.5 text-sm text-muted">
               Most likely:{" "}
-              <span className="text-[#6b6259]">{entry.conditionName}</span>
+              <span className="font-medium text-body">
+                {entry.conditionName}
+              </span>
             </p>
           )}
         </div>
         <div className="flex items-center gap-2">
           {changeMeta && (
-            <span
-              className={`border px-3 py-1 text-[10px] font-medium tracking-wider uppercase ${changeMeta.bg} ${changeMeta.color}`}
-            >
+            <span className={`k-pill ${changeMeta.tint}`}>
               {changeMeta.label}
             </span>
           )}
@@ -125,25 +128,40 @@ function EntryCard({
             type="button"
             onClick={() => onDelete(entry.id)}
             aria-label={`Delete ${entry.label}`}
-            className="px-2 py-1 text-[10px] font-light tracking-wider text-[#b8b0a6] uppercase transition-colors hover:text-[#8a3a3a]"
+            className="flex h-9 w-9 items-center justify-center rounded-full text-muted transition-colors hover:bg-danger-soft hover:text-danger"
           >
-            Delete
+            <svg
+              className="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              role="img"
+              aria-label="Delete"
+            >
+              <title>Delete</title>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+              />
+            </svg>
           </button>
         </div>
       </div>
 
       {/* Body */}
-      <div className="px-6 py-6 md:px-8">
+      <div className="px-5 py-6 sm:px-6">
         <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr]">
           <div>
-            <div className="mb-3 flex flex-wrap items-baseline gap-x-4 gap-y-1">
-              <span className="text-2xl font-light text-[#2c2c2c]">
+            <div className="mb-4 flex flex-wrap items-baseline gap-x-4 gap-y-1">
+              <span className="text-3xl font-semibold tracking-tight">
                 {baselineSeverityDisplay(entry, latest)}
               </span>
-              <span className="text-[10px] font-medium tracking-wider text-[#b8b0a6] uppercase">
+              <span className="text-xs font-semibold tracking-wide text-muted uppercase">
                 baseline {entry.baselineSeverity}/10
               </span>
-              <span className="text-[10px] font-light text-[#b8b0a6]">
+              <span className="text-xs text-muted">
                 {delta === 0
                   ? "no change yet"
                   : delta < 0
@@ -156,8 +174,8 @@ function EntryCard({
 
           <div className="flex flex-col justify-between gap-6">
             {entry.checkIns.length > 0 && (
-              <div className="space-y-2">
-                <p className="text-[10px] font-medium tracking-wider text-[#b8b0a6] uppercase">
+              <div className="space-y-2.5">
+                <p className="text-xs font-semibold tracking-wide text-muted uppercase">
                   Check-ins
                 </p>
                 {entry.checkIns
@@ -168,24 +186,24 @@ function EntryCard({
                     return (
                       <div
                         key={c.id}
-                        className="flex items-start justify-between gap-3 border-b border-[#ece8e2] pb-2"
+                        className="flex items-start justify-between gap-3 rounded-lg bg-soft px-3.5 py-2.5"
                       >
                         <div>
-                          <p className="text-xs font-light text-[#6b6259]">
+                          <p className="text-sm font-medium text-body">
                             {formatDateTime(c.date)}
                           </p>
                           {c.note && (
-                            <p className="mt-0.5 text-[11px] font-light text-[#a09890]">
+                            <p className="mt-0.5 text-xs text-muted">
                               {c.note}
                             </p>
                           )}
                         </div>
                         <div className="shrink-0 text-right">
-                          <p className="text-xs text-[#2c2c2c]">
+                          <p className="text-sm font-semibold">
                             {c.severity}/10
                           </p>
                           <p
-                            className={`text-[9px] font-medium tracking-wider uppercase ${meta.color}`}
+                            className={`text-[11px] font-semibold uppercase ${meta.text}`}
                           >
                             {meta.label}
                           </p>
@@ -200,9 +218,9 @@ function EntryCard({
               <button
                 type="button"
                 onClick={() => setShowCheckIn((v) => !v)}
-                className="w-full border border-[#2c2c2c] bg-[#2c2c2c] px-6 py-3 text-[11px] font-semibold tracking-[0.2em] text-[#faf8f5] uppercase transition-colors hover:bg-[#3d3d3d]"
+                className={`w-full ${showCheckIn ? "k-btn-ghost" : "k-btn"}`}
               >
-                {showCheckIn ? "Cancel check-in" : "Check in"}
+                {showCheckIn ? "Cancel check-in" : "Check in today"}
               </button>
             </div>
           </div>
@@ -210,10 +228,8 @@ function EntryCard({
 
         {/* Check-in form */}
         {showCheckIn && (
-          <div className="mt-6 border border-[#d4c8bc] bg-[#f5f0eb] p-6">
-            <p className="mb-4 text-[10px] font-medium tracking-[0.25em] text-[#8a8278] uppercase">
-              How are you doing now?
-            </p>
+          <div className="mt-6 rounded-xl border border-accent/25 bg-accent-soft/40 p-5 sm:p-6">
+            <p className="mb-4 text-sm font-semibold">How are you doing now?</p>
             <div className="flex flex-wrap gap-2">
               {(["better", "same", "worse"] as const).map((c) => {
                 const meta = CHANGE_STYLES[c];
@@ -222,10 +238,10 @@ function EntryCard({
                     key={c}
                     type="button"
                     onClick={() => setChange(c)}
-                    className={`px-4 py-2 text-[11px] font-medium tracking-wider uppercase transition-colors ${
+                    className={`k-chip ${
                       change === c
-                        ? `border ${meta.bg} ${meta.color}`
-                        : "border border-[#d4c8bc] text-[#8a8278] hover:border-[#b8b0a6]"
+                        ? meta.active
+                        : "border-line bg-white text-body hover:border-accent hover:text-ink"
                     }`}
                   >
                     {meta.label}
@@ -234,7 +250,7 @@ function EntryCard({
               })}
             </div>
             <div className="mt-5 flex items-center gap-4">
-              <span className="text-[10px] font-light tracking-wider text-[#8a8278] uppercase">
+              <span className="text-xs font-semibold tracking-wide text-muted uppercase">
                 Severity
               </span>
               <input
@@ -243,9 +259,9 @@ function EntryCard({
                 max={10}
                 value={severity}
                 onChange={(e) => setSeverity(Number(e.target.value))}
-                className="flex-1 accent-[#2c2c2c]"
+                className="flex-1 accent-accent"
               />
-              <span className="w-8 text-right text-sm font-light text-[#2c2c2c]">
+              <span className="w-8 text-right text-sm font-semibold">
                 {severity}
               </span>
             </div>
@@ -255,20 +271,20 @@ function EntryCard({
               onChange={(e) => setNote(e.target.value)}
               placeholder="Optional note (max 80 chars)"
               maxLength={80}
-              className="mt-4 w-full border-b border-[#d4c8bc] bg-transparent px-0 py-2 text-sm font-light text-[#2c2c2c] placeholder-[#c4bbb0] focus:border-[#8a8278] focus:outline-none"
+              className="k-input mt-4"
             />
             <div className="mt-5 flex justify-end gap-3">
               <button
                 type="button"
                 onClick={() => setShowCheckIn(false)}
-                className="px-5 py-2 text-[11px] font-medium tracking-wider text-[#8a8278] uppercase transition-colors hover:text-[#2c2c2c]"
+                className="k-btn-ghost px-5 py-2.5"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={submitCheckIn}
-                className="bg-[#2c2c2c] px-6 py-2 text-[11px] font-semibold tracking-wider text-[#faf8f5] uppercase transition-colors hover:bg-[#3d3d3d]"
+                className="k-btn px-6 py-2.5"
               >
                 Save check-in
               </button>
@@ -278,11 +294,11 @@ function EntryCard({
       </div>
 
       {/* Card footer */}
-      <div className="flex flex-wrap items-center gap-4 border-t border-[#e8e4df] px-6 py-4 md:px-8">
+      <div className="flex items-center gap-3 border-t border-line-soft px-5 py-4 sm:px-6">
         <button
           type="button"
           onClick={() => onOpenReport(entry.id)}
-          className="inline-flex items-center gap-2 text-[11px] font-medium tracking-wider text-[#6b6259] uppercase transition-colors hover:text-[#2c2c2c]"
+          className="k-btn-ghost px-4 py-2"
         >
           Doctor report
           <span aria-hidden="true">→</span>
@@ -296,8 +312,8 @@ function baselineSeverityDisplay(entry: JournalEntry, latest: number) {
   if (latest === entry.baselineSeverity) return `${latest}/10`;
   return (
     <>
-      <span className="text-[#8a8278]">{entry.baselineSeverity}</span>
-      <span className="text-[#b8b0a6]"> → </span>
+      <span className="text-muted">{entry.baselineSeverity}</span>
+      <span aria-hidden="true"> → </span>
       {latest}
     </>
   );
@@ -310,49 +326,51 @@ export default function JournalView({
   onCheckIn,
   onDelete,
 }: JournalViewProps) {
-  return (
-    <div className="w-full max-w-3xl animate-in fade-in duration-500">
-      <div className="mb-10">
-        <p className="mb-3 flex items-center gap-3 text-[10px] font-medium tracking-[0.3em] text-[#8a8278] uppercase">
-          <span className="h-px w-8 bg-[#8a8278]" />
-          Your symptom history
-        </p>
-        <h1 className="text-2xl font-light tracking-tight text-[#2c2c2c] md:text-3xl">
-          Symptom Journal
-        </h1>
-        <p className="mt-3 max-w-xl text-sm font-light leading-relaxed text-[#8a8278]">
-          Every evaluation is saved here automatically. Check in over time to
-          see how your symptoms are trending.
-        </p>
-      </div>
-
-      {entries.length === 0 ? (
-        <div className="border border-[#e8e4df] bg-[#f0ece6] px-8 py-16 text-center">
-          <p className="text-sm font-light text-[#8a8278]">
-            No evaluations yet. Your history and symptom trends will appear
-            here.
+  if (entries.length === 0) {
+    return (
+      <div className="animate-in fade-in">
+        <div className="k-card px-8 py-16 text-center">
+          <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-accent-soft">
+            <svg
+              className="h-7 w-7 text-accent-strong"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              role="img"
+              aria-label="Journal"
+            >
+              <title>Journal</title>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
+              />
+            </svg>
+          </span>
+          <h2 className="mt-5 text-lg font-semibold">No evaluations yet</h2>
+          <p className="mx-auto mt-1.5 max-w-sm text-sm text-body">
+            Your evaluations and trends will appear here.
           </p>
-          <button
-            type="button"
-            onClick={onStart}
-            className="mt-6 inline-flex items-center gap-2 border border-[#2c2c2c] bg-[#2c2c2c] px-8 py-3 text-[11px] font-semibold tracking-[0.2em] text-[#faf8f5] uppercase transition-colors hover:bg-[#3d3d3d]"
-          >
+          <button type="button" onClick={onStart} className="k-btn mt-6 px-8">
             Start an evaluation
           </button>
         </div>
-      ) : (
-        <div className="space-y-6">
-          {entries.map((entry) => (
-            <EntryCard
-              key={entry.id}
-              entry={entry}
-              onOpenReport={onOpenReport}
-              onCheckIn={onCheckIn}
-              onDelete={onDelete}
-            />
-          ))}
-        </div>
-      )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-5 animate-in fade-in">
+      {entries.map((entry) => (
+        <EntryCard
+          key={entry.id}
+          entry={entry}
+          onOpenReport={onOpenReport}
+          onCheckIn={onCheckIn}
+          onDelete={onDelete}
+        />
+      ))}
     </div>
   );
 }

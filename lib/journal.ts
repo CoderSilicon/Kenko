@@ -28,6 +28,7 @@ export interface JournalEntry {
 
 const STORAGE_KEY = "kenko:journal";
 const MAX_BYTES = 4.5 * 1024 * 1024;
+export const JOURNAL_EVENT = "kenko:journal-changed";
 
 export function uid(): string {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
@@ -68,6 +69,7 @@ function persist(list: JournalEntry[]): JournalEntry[] {
       /* storage unavailable — journal is best-effort */
     }
   }
+  window.dispatchEvent(new Event(JOURNAL_EVENT));
   return out;
 }
 

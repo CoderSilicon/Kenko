@@ -2,6 +2,36 @@
 
 @theme inline {
   --font-sans: var(--font-sans, "Inter", "Helvetica Neue", Arial, sans-serif);
+
+  /* Surfaces */
+  --color-paper: #faf9f6;
+  --color-surface: #ffffff;
+  --color-soft: #f3f1ec;
+
+  /* Text */
+  --color-ink: #1d1c19;
+  --color-body: #4f4d47;
+  --color-muted: #8c8981;
+  --color-faint: #b9b6ae;
+
+  /* Lines */
+  --color-line: #e8e5df;
+  --color-line-soft: #efede8;
+
+  /* Brand */
+  --color-accent: #108463;
+  --color-accent-strong: #0b614a;
+  --color-accent-soft: #e3f1ec;
+
+  /* Severity semantics */
+  --color-success: #2e7d57;
+  --color-success-soft: #e7f2eb;
+  --color-warning: #a57a1f;
+  --color-warning-soft: #f7efdd;
+  --color-alert: #c0721c;
+  --color-alert-soft: #f9eddd;
+  --color-danger: #b3403a;
+  --color-danger-soft: #f8e8e6;
 }
 
 html {
@@ -10,7 +40,46 @@ html {
 }
 
 body {
+  background-color: var(--color-paper);
+  color: var(--color-ink);
   font-weight: 400;
+}
+
+/* Shared component building blocks */
+@utility k-card {
+  @apply rounded-2xl border border-line bg-surface shadow-sm;
+}
+
+@utility k-input {
+  @apply w-full rounded-xl border border-line bg-white px-4 py-3 text-sm text-ink shadow-xs outline-none transition placeholder:text-faint focus:border-accent focus:ring-2 focus:ring-accent/20;
+}
+
+@utility k-btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-semibold text-white shadow-sm outline-none transition-all hover:bg-accent-strong hover:shadow focus-visible:ring-2 focus-visible:ring-accent/40 disabled:cursor-not-allowed disabled:opacity-40;
+}
+
+@utility k-btn-ghost {
+  @apply inline-flex items-center justify-center gap-2 rounded-full border border-line bg-surface px-5 py-3 text-sm font-semibold text-body outline-none transition-colors hover:border-accent hover:text-ink focus-visible:ring-2 focus-visible:ring-accent/30 disabled:cursor-not-allowed disabled:opacity-40;
+}
+
+@utility k-chip {
+  @apply inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium outline-none transition-colors;
+}
+
+@utility k-chip-on {
+  @apply border-accent bg-accent text-white shadow-sm;
+}
+
+@utility k-chip-off {
+  @apply border-line bg-white text-body hover:border-accent hover:text-ink;
+}
+
+@utility k-pill {
+  @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold;
+}
+
+@utility link {
+  @apply font-medium text-accent-strong underline-offset-4 transition-colors hover:text-accent hover:underline;
 }
 
 @keyframes fade-in {
@@ -25,7 +94,7 @@ body {
 @keyframes slide-up {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(16px);
   }
   to {
     opacity: 1;
@@ -45,7 +114,7 @@ body {
 }
 
 .animate-in {
-  animation-duration: 600ms;
+  animation-duration: 500ms;
   animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
   animation-fill-mode: both;
 }
