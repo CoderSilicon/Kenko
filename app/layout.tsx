@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { Noto_Sans_JP } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
-const notoSans = Noto_Sans_JP({
-  variable: "--font-noto",
+const inter = Inter({
+  variable: "--font-sans",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   display: "swap",
@@ -11,7 +11,8 @@ const notoSans = Noto_Sans_JP({
 
 export const metadata: Metadata = {
   title: "Kenko",
-  description: "A tool which allows you to know what happened to you?",
+  description:
+    "A guided symptom evaluation tool that turns health uncertainty into clear, actionable next steps.",
   icons: {
     icon: "/favicon.svg",
   },
@@ -19,7 +20,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${notoSans.variable} h-full`}>
+    <html lang="en" className={`${inter.variable} h-full`}>
       <body className="min-h-full bg-[#faf8f5] font-sans text-[#2c2c2c]">
         {children}
       </body>

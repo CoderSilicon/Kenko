@@ -1,7 +1,7 @@
 ![](./public/kenko.png)
-# Kenko · 健康
+# Kenko
 
-**Your Assistant for Instant Health Insights & Guidance**
+**Your assistant for instant health insights and guidance**
 
 ---
 
@@ -9,7 +9,7 @@
 
 ### How It Works
 
-* **Simple Inputs:** Enter how you feel, select skin conditions (like dryness or redness), and type what you think might be wrong.
+* **Simple Inputs:** Enter how you feel, select physical details (like dryness or redness), and type what you think might be wrong.
 * **Photo Scanning:** Upload a clear picture of a rash, skin issue, or throat area for quick visual checking.
 * **Fact-Checking Your Thoughts:** Tells you directly if your personal guess makes sense based on your actual symptoms.
 * **Instant, Organized Results:** Get easy-to-read cards showing what might be going on without confusing medical jargon.

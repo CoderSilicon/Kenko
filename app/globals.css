@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme inline {
-  --font-sans: var(--font-noto);
+  --font-sans: var(--font-sans, "Inter", "Helvetica Neue", Arial, sans-serif);
 }
 
 html {
@@ -33,6 +33,17 @@ body {
   }
 }
 
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 .animate-in {
   animation-duration: 600ms;
   animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
@@ -45,4 +56,24 @@ body {
 
 .slide-up {
   animation-name: slide-up;
+}
+
+.scale-in {
+  animation-name: scale-in;
+}
+
+@media print {
+  @page {
+    margin: 12mm;
+  }
+
+  body {
+    /* biome-ignore lint/complexity/noImportantStyles: print rules must win over component styles */
+    background: #fff !important;
+  }
+
+  .no-print {
+    /* biome-ignore lint/complexity/noImportantStyles: print rules must win over component styles */
+    display: none !important;
+  }
 }
