@@ -10,7 +10,7 @@ import {
   saveEntry,
   uid,
 } from "@/lib/journal";
-import type { KenkoResult } from "@/lib/types";
+import type { EvaluateResponse } from "../api/evaluate/route";
 import KenkoWizard from "../components/KenkoWizard";
 
 export default function EvaluatePage() {
@@ -28,33 +28,33 @@ export default function EvaluatePage() {
         body: formData,
       });
 
+      const payload = await res.json();
       if (!res.ok) {
-        let message = "Evaluation failed.";
-        try {
-          const errData = await res.json();
-          message = errData.error || message;
-        } catch {
-          /* keep default message */
-        }
-        throw new Error(message);
+        throw new Error(
+          payload?.error ?? "Something went wrong. Please try again.",
+        );
       }
 
-      const data: KenkoResult = await res.json();
-      const symptoms = (formData.get("symptoms") as string) ?? "";
+      const { result, redFlags = [], learn = [] } = payload as EvaluateResponse;
 
+      const symptoms = (formData.get("symptoms") as string) ?? "";
       const images = await extractImages(formData);
+
       const entry: JournalEntry = {
         id: uid(),
         createdAt: Date.now(),
         label:
-          data.differential_analysis[0]?.condition_name ??
-          data.user_hypothesis_analysis?.user_suspected_condition ??
-          "New evaluation",
+          result.differential_analysis?.[0]?.condition_name ??
+          result.user_hypothesis_analysis?.user_suspected_condition ??
+          "My check-in",
         primaryComplaint: symptoms,
         baselineSeverity: parseBaseline(symptoms),
-        conditionName: data.differential_analysis[0]?.condition_name ?? null,
-        triageLevel: data.triage_level,
-        result: data,
+        conditionName:
+          result.differential_analysis?.[0]?.condition_name ?? null,
+        triageLevel: result.triage_level,
+        result,
+        redFlags,
+        learn,
         images,
         checkIns: [],
       };
@@ -76,16 +76,16 @@ export default function EvaluatePage() {
         <div className="mb-8">
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 rounded-full text-sm link"
+            className="inline-flex items-center gap-1.5 text-sm link"
           >
             <span aria-hidden="true">←</span>
-            Back home
+            Home
           </Link>
           <h1 className="mt-3 text-2xl font-semibold tracking-tight md:text-3xl">
-            Tell us what&apos;s going on
+            Tell us what is going on
           </h1>
           <p className="mt-2 max-w-xl text-sm leading-relaxed text-body">
-            One question at a time — skip anything you&apos;re unsure about.
+            One question at a time. If you are not sure, just skip it.
           </p>
         </div>
 
@@ -97,13 +97,18 @@ export default function EvaluatePage() {
               <button
                 type="button"
                 onClick={() => setError(null)}
-                className="shrink-0 text-xs font-semibold tracking-wide text-danger/70 uppercase transition-colors hover:text-danger"
+                className="shrink-0 text-xs font-semibold tracking-wide text-danger/70 uppercase hover:text-danger"
               >
-                Dismiss
+                Close
               </button>
             </div>
           )}
         </div>
+
+        <p className="mt-6 text-center text-xs leading-relaxed text-muted">
+          If something feels dangerous, do not wait for an answer. Call your
+          local emergency number now.
+        </p>
       </div>
     </div>
   );

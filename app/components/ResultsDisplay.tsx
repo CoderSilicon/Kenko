@@ -1,171 +1,169 @@
 "use client";
 
+import type { LearnLink, RedFlagPayload } from "@/lib/learnTypes";
 import type { KenkoResult } from "@/lib/types";
+import EmergencyBanner from "./EmergencyBanner";
+import FollowUpQuestions from "./FollowUpQuestions";
+import LearnMore from "./LearnMore";
 
-const triageConfig: Record<
+/* ── Small shared bits ───────────────────────────────────────────── */
+
+const TRIAGE: Record<
   string,
-  { label: string; color: string; bg: string; ring: string; pct: number }
+  { label: string; kid: string; color: string; bg: string; pct: number }
 > = {
   "Self-Care & Monitor": {
     label: "Self-Care & Monitor",
+    kid: "Look after it at home",
     color: "text-success",
     bg: "bg-success-soft",
-    ring: "stroke-success",
     pct: 25,
   },
   "Primary Care Appointment": {
     label: "Primary Care",
+    kid: "See your doctor",
     color: "text-warning",
     bg: "bg-warning-soft",
-    ring: "stroke-warning",
     pct: 50,
   },
   "Specialist Referral": {
     label: "Specialist Referral",
+    kid: "See a specialist",
     color: "text-alert",
     bg: "bg-alert-soft",
-    ring: "stroke-alert",
     pct: 75,
   },
   "Immediate Emergency Care": {
     label: "Emergency Care",
+    kid: "Get help right now",
     color: "text-danger",
     bg: "bg-danger-soft",
-    ring: "stroke-danger",
     pct: 100,
   },
 };
 
-const verdictConfig: Record<string, { label: string; tint: string }> = {
-  Consistent: { label: "Consistent", tint: "bg-success-soft text-success" },
+const VERDICT: Record<string, { label: string; tint: string }> = {
+  Consistent: {
+    label: "Your guess fits",
+    tint: "bg-success-soft text-success",
+  },
   "Partially Consistent": {
-    label: "Partially Consistent",
+    label: "Your guess partly fits",
     tint: "bg-warning-soft text-warning",
   },
-  Unlikely: { label: "Unlikely", tint: "bg-danger-soft text-danger" },
+  Unlikely: {
+    label: "Your guess does not fit",
+    tint: "bg-danger-soft text-danger",
+  },
 };
 
-const likelihoodBar: Record<string, { width: string; color: string }> = {
+const LIKELIHOOD_BAR: Record<string, { width: string; color: string }> = {
   High: { width: "w-full", color: "bg-danger/70" },
   Moderate: { width: "w-2/3", color: "bg-warning" },
   Low: { width: "w-1/3", color: "bg-faint" },
 };
 
-const likelihoodTint: Record<string, string> = {
+const LIKELIHOOD_TINT: Record<string, string> = {
   High: "bg-danger/10 text-danger",
   Moderate: "bg-warning-soft text-warning",
   Low: "bg-soft text-muted",
 };
 
-function SeverityGauge({ triageLevel }: { triageLevel: string }) {
-  const config =
-    triageConfig[triageLevel] ?? triageConfig["Self-Care & Monitor"];
-  const radius = 80;
-  const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (config.pct / 100) * circumference;
+const ORDER: Record<string, number> = { High: 0, Moderate: 1, Low: 2 };
 
+function SectionHeading({ title }: { title: string }) {
+  return (
+    <h2 className="mb-4 text-lg font-semibold tracking-tight sm:text-xl">
+      {title}
+    </h2>
+  );
+}
+
+/** The care level, in one big readable shape. */
+function CareLevel({ triageLevel }: { triageLevel: string }) {
+  const config = TRIAGE[triageLevel] ?? TRIAGE["Self-Care & Monitor"];
   return (
     <div className="flex flex-col items-center">
-      <div className="relative h-44 w-44">
-        <svg
-          className="h-full w-full -rotate-90"
-          viewBox="0 0 180 180"
-          role="img"
-          aria-label="Triage severity gauge"
+      <div
+        className={`flex h-32 w-32 items-center justify-center rounded-full ${config.bg}`}
+      >
+        <span
+          className={`text-center text-2xl leading-tight font-bold px-3 ${config.color}`}
         >
-          <title>Triage Severity Gauge</title>
-          <circle
-            cx="90"
-            cy="90"
-            r={radius}
-            fill="none"
-            stroke="#e8e5df"
-            strokeWidth="4"
-          />
-          <circle
-            cx="90"
-            cy="90"
-            r={radius}
-            fill="none"
-            strokeWidth="4"
-            strokeLinecap="round"
-            strokeDasharray={circumference}
-            strokeDashoffset={offset}
-            className={`${config.ring} transition-all duration-1000 ease-out`}
-          />
-        </svg>
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className={`text-2xl font-semibold ${config.color}`}>
-            {config.pct}
-          </span>
-          <span className="text-xs font-medium text-muted">/ 100</span>
-        </div>
+          {config.kid}
+        </span>
       </div>
-      <span className={`k-pill mt-4 ${config.bg} ${config.color}`}>
-        {config.label}
-      </span>
     </div>
   );
 }
 
-const likelihoodOrder: Record<string, number> = {
-  High: 0,
-  Moderate: 1,
-  Low: 2,
-};
-
-function sortDifferential(
-  arr: KenkoResult["differential_analysis"],
-): KenkoResult["differential_analysis"] {
-  return [...arr].sort(
-    (a, b) =>
-      (likelihoodOrder[a.likelihood] ?? 3) -
-      (likelihoodOrder[b.likelihood] ?? 3),
-  );
-}
-
-function SectionHeading({
-  eyebrow,
-  title,
+function Indicators({
+  matching,
+  differentiating,
 }: {
-  eyebrow: string;
-  title?: string;
+  matching: string[];
+  differentiating: string[];
 }) {
   return (
-    <div className="mb-5">
-      <p className="text-xs font-semibold tracking-[0.2em] text-accent uppercase">
-        {eyebrow}
-      </p>
-      {title && (
-        <h2 className="mt-1.5 text-xl font-semibold tracking-tight">{title}</h2>
-      )}
+    <div className="mt-5 flex flex-wrap gap-2">
+      {matching.map((t) => (
+        <span key={`m-${t}`} className="k-pill bg-success-soft text-success">
+          <span className="h-1 w-1 rounded-full bg-success" />
+          {t}
+        </span>
+      ))}
+      {differentiating.map((t) => (
+        <span key={`d-${t}`} className="k-pill bg-soft text-muted">
+          <span className="h-1 w-1 rounded-full bg-faint" />
+          {t}
+        </span>
+      ))}
     </div>
   );
 }
+
+/* ── Main component ──────────────────────────────────────────────── */
 
 export default function ResultsDisplay({
   result,
+  redFlags = [],
+  learn = [],
+  followupQuestions = [],
+  onAnswerFollowUps,
+  onSkipFollowUps,
   onPrepareReport,
   onViewJournal,
+  isRefining = false,
 }: {
   result: KenkoResult;
+  redFlags?: RedFlagPayload[];
+  learn?: LearnLink[];
+  followupQuestions?: KenkoResult["followup_questions"];
+  onAnswerFollowUps?: (
+    answers: Array<{ id: string; question: string; answer: string }>,
+  ) => void;
+  onSkipFollowUps?: () => void;
   onPrepareReport: () => void;
   onViewJournal: () => void;
+  isRefining?: boolean;
 }) {
-  const sorted = sortDifferential(result.differential_analysis);
-  const topPick = sorted[0];
-  const others = sorted.slice(1);
-  const vc =
-    verdictConfig[result.user_hypothesis_analysis.verdict] ??
-    verdictConfig.Unlikely;
+  const sorted = [...(result.differential_analysis ?? [])].sort(
+    (a, b) => (ORDER[a.likelihood] ?? 3) - (ORDER[b.likelihood] ?? 3),
+  );
+  const top = sorted[0];
+  const rest = sorted.slice(1);
+  const guess = result.user_hypothesis_analysis;
+  const verdict = VERDICT[guess?.verdict ?? ""];
+  const showFollowUps =
+    !result.is_emergency && followupQuestions.length > 0 && !!onAnswerFollowUps;
 
   return (
     <div className="animate-in slide-up">
       <div className="mx-auto max-w-4xl px-4 pt-8 sm:px-6">
-        {/* Toolbar */}
+        {/* Top bar */}
         <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="text-xs font-semibold tracking-[0.2em] text-accent uppercase">
-            Evaluation results
+            Your result
           </p>
           <div className="flex items-center gap-2">
             <button
@@ -173,153 +171,135 @@ export default function ResultsDisplay({
               onClick={onViewJournal}
               className="k-btn-ghost px-4 py-2"
             >
-              Journal
+              My journal
             </button>
             <button
               type="button"
               onClick={onPrepareReport}
               className="k-btn px-4 py-2"
             >
-              Doctor report
+              For my doctor
             </button>
           </div>
         </div>
 
-        {/* Emergency */}
-        {result.is_emergency && (
-          <div className="mt-6 flex items-start gap-4 rounded-2xl bg-danger px-6 py-5 text-white shadow-lg shadow-danger/25">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/40 text-base font-bold">
-              !
-            </span>
-            <div>
-              <p className="text-sm font-bold tracking-wide uppercase">
-                Emergency
-              </p>
-              <p className="mt-1 text-sm font-light leading-relaxed text-white/95">
-                {result.emergency_warning}
-              </p>
-              <p className="mt-2 text-xs font-medium text-white/70">
-                Call emergency services immediately or go to your nearest
-                emergency room.
-              </p>
-            </div>
-          </div>
-        )}
+        {/* Danger first, always */}
+        <EmergencyBanner flags={redFlags} warning={result.emergency_warning} />
 
-        {/* Summary */}
+        {/* The answer, in plain words */}
         <section className="mt-6 k-card p-6 sm:p-8">
-          <div className="grid items-center gap-8 md:grid-cols-[auto_1fr]">
-            <SeverityGauge triageLevel={result.triage_level} />
+          <div className="grid items-center gap-7 md:grid-cols-[auto_1fr]">
+            <CareLevel triageLevel={result.triage_level} />
             <div>
-              <SectionHeading eyebrow="Summary" />
-              <p className="text-[15px] font-normal leading-relaxed text-body">
+              <p className="text-xs font-semibold tracking-[0.2em] text-accent uppercase">
+                The short version
+              </p>
+              <p className="mt-2 text-lg leading-relaxed font-medium text-ink">
                 {result.kenko_eval_summary}
               </p>
+              {result.plain_summary && (
+                <p className="mt-3 rounded-xl bg-soft px-4 py-3 text-sm leading-relaxed text-body">
+                  <span className="font-semibold">
+                    In really simple words:{" "}
+                  </span>
+                  {result.plain_summary}
+                </p>
+              )}
             </div>
           </div>
         </section>
 
-        {/* Top Pick */}
-        {topPick && (
+        {/* Follow-up questions */}
+        {showFollowUps && (
+          <div className="mt-6">
+            <FollowUpQuestions
+              questions={followupQuestions}
+              onSubmit={
+                onAnswerFollowUps as NonNullable<typeof onAnswerFollowUps>
+              }
+              onCancel={onSkipFollowUps as NonNullable<typeof onSkipFollowUps>}
+              isLoading={isRefining}
+            />
+          </div>
+        )}
+
+        {/* Most likely */}
+        {top && (
           <section className="mt-10">
-            <SectionHeading eyebrow="Most likely" />
+            <SectionHeading title="Most likely" />
             <div className="k-card p-6 sm:p-8">
               <div className="flex flex-wrap items-center justify-between gap-3">
-                <h2 className="text-xl font-semibold tracking-tight">
-                  {topPick.condition_name}
-                </h2>
+                <h3 className="text-xl font-semibold tracking-tight">
+                  {top.condition_name}
+                </h3>
                 <span
-                  className={`k-pill ${likelihoodTint[topPick.likelihood] ?? "bg-soft text-muted"}`}
+                  className={`k-pill ${
+                    LIKELIHOOD_TINT[top.likelihood] ?? "bg-soft text-muted"
+                  }`}
                 >
-                  {topPick.likelihood} likelihood
+                  {top.likelihood} chance
                 </span>
               </div>
 
               <div className="mt-4 h-1.5 w-full overflow-hidden rounded-full bg-line-soft">
                 <div
-                  className={`h-full rounded-full transition-all duration-700 ease-out ${
-                    likelihoodBar[topPick.likelihood]?.color ?? "bg-faint"
-                  } ${likelihoodBar[topPick.likelihood]?.width ?? "w-1/3"}`}
+                  className={`h-full rounded-full ${
+                    LIKELIHOOD_BAR[top.likelihood]?.color ?? "bg-faint"
+                  } ${LIKELIHOOD_BAR[top.likelihood]?.width ?? "w-1/3"}`}
                 />
               </div>
 
-              <p className="mt-5 text-sm font-normal leading-relaxed text-body">
-                {topPick.clinical_overview}
+              <p className="mt-5 text-sm leading-relaxed text-body">
+                {top.clinical_overview}
               </p>
-
-              <div className="mt-5 flex flex-wrap gap-2">
-                {topPick.matching_indicators.map((ind) => (
-                  <span
-                    key={ind}
-                    className="k-pill bg-success-soft text-success"
-                  >
-                    <span className="h-1 w-1 rounded-full bg-success" />
-                    {ind}
-                  </span>
-                ))}
-                {topPick.differentiating_indicators.map((ind) => (
-                  <span key={ind} className="k-pill bg-soft text-muted">
-                    <span className="h-1 w-1 rounded-full bg-faint" />
-                    {ind}
-                  </span>
-                ))}
-              </div>
+              <Indicators
+                matching={top.matching_indicators ?? []}
+                differentiating={top.differentiating_indicators ?? []}
+              />
             </div>
           </section>
         )}
 
-        {/* Other Possibilities */}
-        {others.length > 0 && (
+        {/* Other possibilities */}
+        {rest.length > 0 && (
           <section className="mt-10">
-            <SectionHeading eyebrow="Other possibilities" />
+            <SectionHeading title="Other things it could be" />
             <div className="space-y-4">
-              {others.map((dx, i) => {
-                const lb = likelihoodBar[dx.likelihood] ?? likelihoodBar.Low;
+              {rest.map((dx, i) => {
+                const bar = LIKELIHOOD_BAR[dx.likelihood] ?? LIKELIHOOD_BAR.Low;
                 return (
                   <div key={dx.condition_name} className="k-card p-6">
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div className="flex items-center gap-3">
                         <span className="flex h-7 w-7 items-center justify-center rounded-full bg-soft text-xs font-semibold text-muted">
-                          {String(i + 2).padStart(2, "0")}
+                          {i + 2}
                         </span>
-                        <h3 className="text-base font-semibold">
+                        <h4 className="text-base font-semibold">
                           {dx.condition_name}
-                        </h3>
+                        </h4>
                       </div>
                       <span
-                        className={`k-pill ${likelihoodTint[dx.likelihood] ?? "bg-soft text-muted"}`}
+                        className={`k-pill ${
+                          LIKELIHOOD_TINT[dx.likelihood] ?? "bg-soft text-muted"
+                        }`}
                       >
-                        {dx.likelihood}
+                        {dx.likelihood} chance
                       </span>
                     </div>
 
                     <div className="mt-4 h-1 w-full overflow-hidden rounded-full bg-line-soft">
                       <div
-                        className={`h-full rounded-full ${lb.color} ${lb.width}`}
+                        className={`h-full rounded-full ${bar.color} ${bar.width}`}
                       />
                     </div>
 
-                    <p className="mt-4 text-sm font-normal leading-relaxed text-body">
+                    <p className="mt-4 text-sm leading-relaxed text-body">
                       {dx.clinical_overview}
                     </p>
-
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      {dx.matching_indicators.map((ind) => (
-                        <span
-                          key={ind}
-                          className="k-pill bg-success-soft text-success"
-                        >
-                          <span className="h-1 w-1 rounded-full bg-success" />
-                          {ind}
-                        </span>
-                      ))}
-                      {dx.differentiating_indicators.map((ind) => (
-                        <span key={ind} className="k-pill bg-soft text-muted">
-                          <span className="h-1 w-1 rounded-full bg-faint" />
-                          {ind}
-                        </span>
-                      ))}
-                    </div>
+                    <Indicators
+                      matching={dx.matching_indicators ?? []}
+                      differentiating={dx.differentiating_indicators ?? []}
+                    />
                   </div>
                 );
               })}
@@ -327,82 +307,106 @@ export default function ResultsDisplay({
           </section>
         )}
 
-        {/* Hypothesis */}
-        <section className="mt-10">
-          <SectionHeading eyebrow="Your hypothesis" />
-          <div className="k-card p-6">
-            <div className="flex flex-wrap items-center gap-3">
-              <h3 className="text-base font-semibold">
-                {result.user_hypothesis_analysis.user_suspected_condition ||
-                  "No hypothesis provided"}
-              </h3>
-              {result.user_hypothesis_analysis.user_suspected_condition && (
-                <span className={`k-pill ${vc.tint}`}>{vc.label}</span>
-              )}
-            </div>
-            <p className="mt-3 text-sm font-normal leading-relaxed text-body">
-              {result.user_hypothesis_analysis.clinical_reasoning}
-            </p>
-          </div>
-        </section>
-
-        {/* Recommended Actions */}
-        <section className="mt-10">
-          <SectionHeading eyebrow="Recommended actions" />
-          <div className="grid gap-3 md:grid-cols-2">
-            {result.recommended_actions.map((action, i) => (
-              <div
-                key={action}
-                className="flex items-start gap-4 rounded-xl border border-line bg-surface px-5 py-4 shadow-sm"
-              >
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent-soft text-xs font-semibold text-accent-strong">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <p className="text-sm font-normal leading-relaxed text-body">
-                  {action}
-                </p>
+        {/* Their guess */}
+        {guess?.user_suspected_condition && (
+          <section className="mt-10">
+            <SectionHeading title="What you thought it was" />
+            <div className="k-card p-6">
+              <div className="flex flex-wrap items-center gap-3">
+                <h4 className="text-base font-semibold">
+                  {guess.user_suspected_condition}
+                </h4>
+                {verdict && (
+                  <span className={`k-pill ${verdict.tint}`}>
+                    {verdict.label}
+                  </span>
+                )}
               </div>
-            ))}
-          </div>
-        </section>
+              <p className="mt-3 text-sm leading-relaxed text-body">
+                {guess.clinical_reasoning}
+              </p>
+            </div>
+          </section>
+        )}
 
-        {/* Physician Consult */}
-        <section className="mt-10">
-          <SectionHeading eyebrow="Questions for your doctor" />
-          <div className="k-card p-6">
-            <ul className="space-y-3">
-              {result.physician_consult_guide.map((q, i) => (
-                <li
-                  key={q}
-                  className="flex items-start gap-3 text-sm text-body"
+        {/* What to do now */}
+        {result.recommended_actions?.length > 0 && (
+          <section className="mt-10">
+            <SectionHeading title="What to do now" />
+            <div className="grid gap-3 md:grid-cols-2">
+              {result.recommended_actions.map((action, i) => (
+                <div
+                  key={action}
+                  className="flex items-start gap-4 rounded-xl border border-line bg-surface px-5 py-4 shadow-sm"
                 >
-                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-soft text-[11px] font-semibold text-muted">
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent-soft text-xs font-semibold text-accent-strong">
                     {i + 1}
                   </span>
-                  {q}
-                </li>
+                  <p className="text-sm leading-relaxed text-body">{action}</p>
+                </div>
               ))}
-            </ul>
-          </div>
-        </section>
+            </div>
+          </section>
+        )}
 
-        {/* Next Steps */}
+        {/* Questions to ask */}
+        {result.physician_consult_guide?.length > 0 && (
+          <section className="mt-10">
+            <SectionHeading title="Questions to ask your doctor" />
+            <div className="k-card p-6">
+              <ul className="space-y-3">
+                {result.physician_consult_guide.map((q) => (
+                  <li
+                    key={q}
+                    className="flex items-start gap-3 text-sm text-body"
+                  >
+                    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-soft text-[11px] font-semibold text-muted">
+                      ?
+                    </span>
+                    {q}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </section>
+        )}
+
+        {/* How sure */}
+        {result.confidence_note && (
+          <section className="mt-10">
+            <SectionHeading title="How sure are we?" />
+            <div className="rounded-2xl border border-line bg-soft px-6 py-5">
+              <p className="text-sm leading-relaxed text-body">
+                {result.confidence_note}
+              </p>
+              {result.additional_warning && (
+                <p className="mt-3 rounded-xl border border-warning/25 bg-warning-soft px-4 py-3 text-sm leading-relaxed text-warning">
+                  <span className="font-semibold">Also worth knowing: </span>
+                  {result.additional_warning}
+                </p>
+              )}
+            </div>
+          </section>
+        )}
+
+        {/* Trusted reading */}
+        <LearnMore links={learn} />
+
+        {/* Next steps */}
         <section className="mt-10 no-print">
-          <SectionHeading eyebrow="Next steps" />
+          <SectionHeading title="What next?" />
           <div className="grid gap-4 md:grid-cols-2">
             <button
               type="button"
               onClick={onPrepareReport}
               className="group flex flex-col items-start rounded-2xl bg-accent p-6 text-left text-white shadow-md shadow-accent/20 transition-all hover:shadow-lg"
             >
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 text-sm font-bold transition-transform group-hover:translate-x-0.5">
-                01
-              </span>
+              <span className="text-sm font-bold">1</span>
               <span className="mt-4 text-sm font-semibold">
-                Prepare &amp; print your doctor report
+                Print a page for my doctor
               </span>
-              <span className="mt-1 text-xs font-light leading-relaxed text-white/75">
-                A structured summary to bring to a clinician.
+              <span className="mt-1 text-xs leading-relaxed text-white/75">
+                One clean sheet with everything they need.
               </span>
             </button>
             <button
@@ -410,24 +414,21 @@ export default function ResultsDisplay({
               onClick={onViewJournal}
               className="group flex flex-col items-start rounded-2xl border border-line bg-surface p-6 text-left shadow-sm transition-all hover:border-accent hover:shadow-md"
             >
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-accent-soft text-sm font-bold text-accent-strong transition-transform group-hover:translate-x-0.5">
-                02
-              </span>
+              <span className="text-sm font-bold text-accent-strong">2</span>
               <span className="mt-4 text-sm font-semibold text-ink">
-                Track this in your symptom journal
+                Keep track of how it changes
               </span>
-              <span className="mt-1 text-xs font-light leading-relaxed text-muted">
-                Check in daily to spot trends.
+              <span className="mt-1 text-xs leading-relaxed text-muted">
+                A quick daily check-in shows if you are getting better.
               </span>
             </button>
           </div>
         </section>
 
-        {/* Disclaimer */}
-        <p className="mt-10 pb-12 text-center text-[11px] font-light leading-loose text-muted">
-          This evaluation is generated by AI for educational purposes only. It
-          is not a medical diagnosis. Accuracy is not guaranteed. Always confirm
-          with a licensed healthcare provider.
+        <p className="mt-10 pb-12 text-center text-xs leading-relaxed text-muted">
+          Kenko is a learning tool, not a doctor. It cannot diagnose or treat
+          you. Always check with a real healthcare professional before you
+          decide what to do.
         </p>
       </div>
     </div>

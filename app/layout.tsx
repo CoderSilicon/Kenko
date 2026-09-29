@@ -11,9 +11,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Kenko",
+  title: "Kenko — what your symptoms could mean",
   description:
-    "A guided symptom evaluation tool that turns health uncertainty into clear, actionable next steps.",
+    "Answer a few easy questions and get a clear, honest answer about what your symptoms could mean and what to do next.",
   icons: {
     icon: "/favicon.svg",
   },
@@ -32,15 +32,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                 <p className="text-sm font-semibold tracking-tight">
                   Kenko<span className="text-accent">.</span>
                 </p>
-                <p className="max-w-3xl text-xs font-light leading-relaxed text-muted">
+                <p className="max-w-3xl text-xs leading-relaxed text-muted">
                   <span className="font-medium text-body">
-                    Medical Disclaimer:
+                    Please remember:
                   </span>{" "}
-                  Kenko is an AI-powered educational tool. It does not diagnose,
-                  treat, or replace professional medical advice. Outputs may
-                  contain inaccuracies. Always consult a licensed healthcare
-                  provider to confirm any evaluation before making health
-                  decisions.
+                  Kenko is a learning tool, not a doctor. It cannot diagnose or
+                  treat you. Health information links come from MedlinePlus.gov,
+                  a free service of the U.S. National Library of Medicine, which
+                  does not endorse Kenko. If you feel unwell, please talk to a
+                  real healthcare professional.
                 </p>
               </div>
             </div>

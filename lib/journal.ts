@@ -1,4 +1,4 @@
-import type { KenkoResult } from "./types";
+import type { KenkoResult, LearnLink, RedFlagPayload } from "./types";
 
 export interface CheckIn {
   id: string;
@@ -22,6 +22,10 @@ export interface JournalEntry {
   conditionName: string | null;
   triageLevel: string;
   result: KenkoResult;
+  /** Danger signs found by the word scanner, if any. */
+  redFlags: RedFlagPayload[];
+  /** Trusted MedlinePlus reading saved with the result. */
+  learn: LearnLink[];
   images: StoredImage[];
   checkIns: CheckIn[];
 }

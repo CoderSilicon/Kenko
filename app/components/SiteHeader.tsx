@@ -24,7 +24,13 @@ export default function SiteHeader() {
           Kenko<span className="text-accent">.</span>
         </Link>
 
-        <nav className="flex items-center gap-1.5 sm:gap-3">
+        <nav className="flex items-center gap-1.5 sm:gap-2">
+          <Link
+            href="/learn"
+            className="inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium text-body transition-colors hover:bg-soft hover:text-accent-strong"
+          >
+            Learn
+          </Link>
           <Link
             href="/journal"
             className="inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium text-body transition-colors hover:bg-soft hover:text-accent-strong"
@@ -41,8 +47,8 @@ export default function SiteHeader() {
             className="inline-flex items-center gap-1.5 rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:bg-accent-strong sm:px-5"
           >
             <span className="text-base leading-none">+</span>
-            <span className="hidden sm:inline">New evaluation</span>
-            <span className="inline sm:hidden">Evaluate</span>
+            <span className="hidden sm:inline">Check symptoms</span>
+            <span className="inline sm:hidden">Check</span>
           </Link>
         </nav>
       </div>

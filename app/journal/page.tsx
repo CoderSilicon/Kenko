@@ -40,18 +40,19 @@ export default function JournalPage() {
         <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="text-xs font-semibold tracking-[0.2em] text-accent uppercase">
-              Your symptom history
+              My health journal
             </p>
             <h1 className="mt-2 text-2xl font-semibold tracking-tight md:text-3xl">
-              Symptom Journal
+              My health journal
             </h1>
             <p className="mt-2 max-w-xl text-sm leading-relaxed text-body">
-              Auto-saved. Check in over time to spot trends.
+              Saved on this device. Check in each day to see if you are getting
+              better.
             </p>
           </div>
           <Link href="/evaluate" className="k-btn">
             <span aria-hidden="true">+</span>
-            New evaluation
+            New check
           </Link>
         </div>
 

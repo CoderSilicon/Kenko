@@ -176,7 +176,7 @@ function EntryCard({
             {entry.checkIns.length > 0 && (
               <div className="space-y-2.5">
                 <p className="text-xs font-semibold tracking-wide text-muted uppercase">
-                  Check-ins
+                  Daily notes
                 </p>
                 {entry.checkIns
                   .slice(-3)
@@ -220,7 +220,7 @@ function EntryCard({
                 onClick={() => setShowCheckIn((v) => !v)}
                 className={`w-full ${showCheckIn ? "k-btn-ghost" : "k-btn"}`}
               >
-                {showCheckIn ? "Cancel check-in" : "Check in today"}
+                {showCheckIn ? "Put away" : "Add today"}
               </button>
             </div>
           </div>
@@ -229,7 +229,7 @@ function EntryCard({
         {/* Check-in form */}
         {showCheckIn && (
           <div className="mt-6 rounded-xl border border-accent/25 bg-accent-soft/40 p-5 sm:p-6">
-            <p className="mb-4 text-sm font-semibold">How are you doing now?</p>
+            <p className="mb-4 text-sm font-semibold">How do you feel today?</p>
             <div className="flex flex-wrap gap-2">
               {(["better", "same", "worse"] as const).map((c) => {
                 const meta = CHANGE_STYLES[c];
@@ -269,7 +269,7 @@ function EntryCard({
               type="text"
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              placeholder="Optional note (max 80 chars)"
+              placeholder="Anything to add? (80 characters)"
               maxLength={80}
               className="k-input mt-4"
             />
@@ -279,14 +279,14 @@ function EntryCard({
                 onClick={() => setShowCheckIn(false)}
                 className="k-btn-ghost px-5 py-2.5"
               >
-                Cancel
+                Put away
               </button>
               <button
                 type="button"
                 onClick={submitCheckIn}
                 className="k-btn px-6 py-2.5"
               >
-                Save check-in
+                Save
               </button>
             </div>
           </div>
@@ -300,7 +300,7 @@ function EntryCard({
           onClick={() => onOpenReport(entry.id)}
           className="k-btn-ghost px-4 py-2"
         >
-          Doctor report
+          For my doctor
           <span aria-hidden="true">→</span>
         </button>
       </div>
@@ -348,12 +348,12 @@ export default function JournalView({
               />
             </svg>
           </span>
-          <h2 className="mt-5 text-lg font-semibold">No evaluations yet</h2>
+          <h2 className="mt-5 text-lg font-semibold">Nothing here yet</h2>
           <p className="mx-auto mt-1.5 max-w-sm text-sm text-body">
-            Your evaluations and trends will appear here.
+            Your check-ins will show up here, so you can see how things change.
           </p>
           <button type="button" onClick={onStart} className="k-btn mt-6 px-8">
-            Start an evaluation
+            Check my symptoms
           </button>
         </div>
       </div>

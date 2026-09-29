@@ -127,6 +127,9 @@ export default function DoctorReport({
 }) {
   const parts = parseSymptomParts(entry.primaryComplaint);
   const { result } = entry;
+  // Entries saved before these fields existed simply have none.
+  const redFlags = entry.redFlags ?? [];
+  const learn = entry.learn ?? [];
 
   return (
     <div className="animate-in fade-in">
@@ -157,17 +160,19 @@ export default function DoctorReport({
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
                 <p className="mb-1 text-[10px] font-semibold tracking-[0.2em] text-accent uppercase">
-                  Doctor-Prep Report
+                  Patient Summary for Your Doctor
                 </p>
                 <h1 className="text-2xl font-semibold tracking-tight text-ink">
                   {entry.label}
                 </h1>
               </div>
               <div className="text-right text-[11px] font-normal text-muted">
-                <p className="font-medium text-body">Prepared by Kenko</p>
+                <p className="font-medium text-body">
+                  Prepared by the patient using Kenko
+                </p>
                 <p>{formatDateTime(entry.createdAt)}</p>
                 <p className="mt-1 text-faint">
-                  AI-generated synopsis — not a diagnosis
+                  Written by an AI tool with the patient. Not a diagnosis.
                 </p>
               </div>
             </div>
@@ -175,7 +180,7 @@ export default function DoctorReport({
 
           {/* Patient-submitted summary */}
           <section className="mb-8">
-            <SectionLabel>Patient-reported summary</SectionLabel>
+            <SectionLabel>What the patient reported</SectionLabel>
             <p className="text-sm font-normal leading-relaxed text-ink">
               {entry.primaryComplaint.split("Severity").slice(0, 1).join("")}
             </p>
@@ -187,7 +192,7 @@ export default function DoctorReport({
                 <p className="mt-1 text-[13px] font-normal text-ink">
                   {parts.location.length > 0
                     ? parts.location.join(", ")
-                    : "Not reported"}
+                    : "Not given"}
                 </p>
               </div>
               <div className="rounded-lg border border-line p-3">
@@ -195,7 +200,7 @@ export default function DoctorReport({
                   Onset
                 </p>
                 <p className="mt-1 text-[13px] font-normal text-ink">
-                  {parts.onset ?? "Not reported"}
+                  {parts.onset ?? "Not given"}
                 </p>
               </div>
               <div className="rounded-lg border border-line p-3">
@@ -203,7 +208,7 @@ export default function DoctorReport({
                   Duration
                 </p>
                 <p className="mt-1 text-[13px] font-normal text-ink">
-                  {parts.duration ?? "Not reported"}
+                  {parts.duration ?? "Not given"}
                 </p>
               </div>
             </div>
@@ -212,7 +217,7 @@ export default function DoctorReport({
           {/* Photos */}
           {entry.images.length > 0 && (
             <section className="mb-8">
-              <SectionLabel>Photos provided</SectionLabel>
+              <SectionLabel>Photos the patient shared</SectionLabel>
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                 {entry.images.map((img) => (
                   <div
@@ -236,7 +241,7 @@ export default function DoctorReport({
 
           {/* Timeline */}
           <section className="mb-8">
-            <SectionLabel>Symptom timeline</SectionLabel>
+            <SectionLabel>How the symptoms changed over time</SectionLabel>
             <TimelineTable entry={entry} />
           </section>
 
@@ -244,7 +249,7 @@ export default function DoctorReport({
           <section className="mb-8 rounded-xl border border-line p-5">
             <div className="flex flex-wrap items-baseline justify-between gap-3">
               <p className="text-[10px] font-semibold tracking-[0.18em] text-muted uppercase">
-                Recommended care level
+                Suggested level of care
               </p>
               <p className="text-sm font-semibold text-ink">
                 {result.triage_level}
@@ -265,7 +270,7 @@ export default function DoctorReport({
 
           {/* Conditions */}
           <section className="mb-8">
-            <SectionLabel>Conditions considered</SectionLabel>
+            <SectionLabel>Conditions that were considered</SectionLabel>
             <ConditionList result={result} />
           </section>
 
@@ -283,7 +288,7 @@ export default function DoctorReport({
 
           {/* Questions */}
           <section className="mb-8">
-            <SectionLabel>Questions to ask your provider</SectionLabel>
+            <SectionLabel>Questions the patient would like to ask</SectionLabel>
             <ol className="space-y-2">
               {result.physician_consult_guide.map((q, i) => (
                 <li
@@ -298,6 +303,55 @@ export default function DoctorReport({
               ))}
             </ol>
           </section>
+
+          {/* Red flags */}
+          {redFlags.length > 0 && (
+            <section className="mb-8 rounded-xl border border-danger/40 bg-danger-soft p-5">
+              <p className="text-[10px] font-semibold tracking-[0.18em] text-danger uppercase">
+                Danger signs reported
+              </p>
+              <ul className="mt-2 space-y-1.5">
+                {redFlags.map((f) => (
+                  <li
+                    key={f.id}
+                    className="text-[13px] leading-relaxed text-ink"
+                  >
+                    <span className="font-semibold">{f.title}.</span> {f.advice}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {/* Confidence */}
+          {result.confidence_note && (
+            <section className="mb-8">
+              <SectionLabel>How certain the tool was</SectionLabel>
+              <p className="text-[13px] leading-relaxed text-body">
+                {result.confidence_note}
+              </p>
+            </section>
+          )}
+
+          {/* Trusted reading */}
+          {learn.length > 0 && (
+            <section className="mb-8">
+              <SectionLabel>
+                Reading from MedlinePlus.gov (National Library of Medicine)
+              </SectionLabel>
+              <ul className="space-y-1.5">
+                {learn.map((l) => (
+                  <li
+                    key={l.url}
+                    className="text-[13px] leading-relaxed text-body"
+                  >
+                    <span className="font-medium text-ink">{l.title}</span>
+                    {l.url ? ` — ${l.url}` : ""}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
 
           {/* Disclaimer */}
           <div className="border-t border-line-soft pt-4">

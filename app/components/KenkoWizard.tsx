@@ -92,16 +92,16 @@ const ASSOCIATED_SYMPTOMS = [
 ];
 
 const SEVERITY_LABELS: Record<number, string> = {
-  1: "Barely noticeable",
-  2: "Very mild",
-  3: "Uncomfortable",
-  4: "Moderate",
+  1: "Barely there",
+  2: "Very small",
+  3: "A bit annoying",
+  4: "Middling",
   5: "Noticeable",
-  6: "Distressing",
-  7: "Severe",
-  8: "Very intense",
-  9: "Almost unbearable",
-  10: "Worst possible",
+  6: "Hard to ignore",
+  7: "Very bad",
+  8: "Really bad",
+  9: "Almost too much",
+  10: "The worst it can be",
 };
 
 export default function KenkoWizard({
@@ -267,7 +267,7 @@ export default function KenkoWizard({
             Step {step + 1} of {TOTAL_STEPS}
           </span>
           <span className="text-xs font-medium text-muted">
-            {Math.round(progress)}% complete
+            {Math.round(progress)}% done
           </span>
         </div>
 
@@ -402,12 +402,12 @@ function StepBasic({
 }) {
   return (
     <div>
-      <StepHeader title="What&apos;s bothering you?" />
+      <StepHeader title="What is bothering you?" />
       <textarea
         value={data.symptoms}
         onChange={(e) => update("symptoms", e.target.value)}
         rows={5}
-        placeholder="e.g., I have a throbbing headache on the right side that started yesterday..."
+        placeholder="e.g., My head has hurt since yesterday and it gets worse when I move..."
         className="k-input resize-none leading-relaxed"
       />
     </div>
@@ -425,7 +425,7 @@ function StepLocation({
 }) {
   return (
     <div>
-      <StepHeader title="Where on your body?" />
+      <StepHeader title="Where does it hurt?" />
       <div className="flex flex-wrap gap-2">
         {BODY_LOCATIONS.map((loc) => {
           const active = data.bodyLocation.includes(loc);
@@ -446,7 +446,7 @@ function StepLocation({
           type="text"
           value={data.bodyLocationOther}
           onChange={(e) => update("bodyLocationOther", e.target.value)}
-          placeholder="Other location..."
+          placeholder="Somewhere else..."
           className="k-input"
         />
       </div>
@@ -523,7 +523,7 @@ function StepDuration({
 }) {
   return (
     <div>
-      <StepHeader title="How long has this been going on?" />
+      <StepHeader title="How long has it been going on?" />
       <div className="space-y-2">
         {DURATION_OPTIONS.map((dur) => {
           const active = data.duration === dur;
@@ -553,7 +553,7 @@ function StepDuration({
               update("durationOther", e.target.value);
               if (e.target.value) update("duration", "");
             }}
-            placeholder="Other duration..."
+            placeholder="Something else..."
             className="k-input mt-1"
           />
         </div>
@@ -571,7 +571,7 @@ function StepSeverity({
 }) {
   return (
     <div>
-      <StepHeader title="How severe is it?" />
+      <StepHeader title="How bad is it?" />
       <div className="text-center">
         <span className="mb-1 block text-5xl font-semibold tracking-tight">
           {data.severity}
@@ -621,7 +621,7 @@ function StepAssociated({
 }) {
   return (
     <div>
-      <StepHeader title="Anything else you&apos;re feeling?" />
+      <StepHeader title="Anything else you feel?" />
       <div className="flex flex-wrap gap-2">
         {ASSOCIATED_SYMPTOMS.map((sym) => {
           const active = data.associatedSymptoms.includes(sym);
@@ -642,7 +642,7 @@ function StepAssociated({
           type="text"
           value={data.associatedSymptomsOther}
           onChange={(e) => update("associatedSymptomsOther", e.target.value)}
-          placeholder="Other symptom..."
+          placeholder="Something else..."
           className="k-input"
         />
       </div>
@@ -677,8 +677,8 @@ function StepHistory({
   return (
     <div>
       <StepHeader
-        title="Anything relevant about you?"
-        subtitle="Medications, allergies, conditions, travel — skip what doesn&apos;t apply."
+        title="Anything we should know about you?"
+        subtitle="Medicines, allergies, illnesses, travel. Skip anything that does not apply."
       />
 
       <div className="space-y-5">
@@ -734,7 +734,7 @@ function StepHistory({
             value={data.skinContext}
             onChange={(e) => update("skinContext", e.target.value)}
             rows={2}
-            placeholder="e.g., Dry skin, temp 37.2°C, BP 130/85"
+            placeholder="e.g., Dry skin, temperature 37.2C"
             className="k-input resize-none"
           />
         </div>
@@ -760,7 +760,7 @@ function StepPhoto({
 }) {
   return (
     <div>
-      <StepHeader title="Any photos?" />
+      <StepHeader title="Add a photo?" />
 
       <button
         type="button"
@@ -813,11 +813,12 @@ function StepPhoto({
             "Drop image here"
           ) : (
             <>
-              Drag a photo or <span className="text-accent-strong">browse</span>
+              Drag a photo here, or{" "}
+              <span className="text-accent-strong">choose a file</span>
             </>
           )}
         </p>
-        <p className="mt-1 text-xs text-muted">JPG, PNG, WebP — up to 10MB</p>
+        <p className="mt-1 text-xs text-muted">JPG, PNG or WebP. Up to 10MB.</p>
       </button>
 
       <input
@@ -872,7 +873,7 @@ function StepHypothesis({
     <div>
       <StepHeader
         title="What do you think it might be?"
-        subtitle="Optional — skip if you&apos;re not sure."
+        subtitle="Optional. Skip it if you are not sure."
       />
       <input
         type="text"
