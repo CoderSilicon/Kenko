@@ -39,14 +39,11 @@ export default function JournalPage() {
       <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 md:py-14">
         <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className="text-xs font-semibold tracking-[0.2em] text-accent uppercase">
-              My health journal
-            </p>
             <h1 className="mt-2 text-2xl font-semibold tracking-tight md:text-3xl">
               My health journal
             </h1>
             <p className="mt-2 max-w-xl text-sm leading-relaxed text-body">
-              Saved on this device. Check in each day to see if you are getting
+              This is saved on this device. Check in each day to see if you are getting
               better.
             </p>
           </div>

@@ -3,13 +3,6 @@ import { mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import Database from "better-sqlite3";
 
-/**
- * Small SQLite cache used for MedlinePlus responses.
- *
- * NLM asks every client to cache results for 12-24 hours and to stay under
- * 85 requests per minute. We do both here: rows expire after 24h and the
- * client layer has its own rate limiter.
- */
 
 const DB_PATH =
   process.env.KENKO_DB_PATH ?? join(process.cwd(), "data", "kenko.db");
@@ -40,7 +33,7 @@ export function getDb(): Database.Database | null {
     db = open();
     return db;
   } catch (error) {
-    console.warn("Kenko cache unavailable, continuing without it:", error);
+    console.warn("Cache unavailable, continuing without it:", error);
     return null;
   }
 }

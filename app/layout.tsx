@@ -11,7 +11,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Kenko — what your symptoms could mean",
+  title: "Kenko",
   description:
     "Answer a few easy questions and get a clear, honest answer about what your symptoms could mean and what to do next.",
   icons: {

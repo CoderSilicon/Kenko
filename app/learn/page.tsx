@@ -56,14 +56,11 @@ export default function LearnPage() {
   return (
     <div className="animate-in fade-in">
       <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 md:py-14">
-        <p className="text-xs font-semibold tracking-[0.2em] text-accent uppercase">
-          Health library
-        </p>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight md:text-3xl">
           Learn about a health topic
         </h1>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-body">
-          Short, plain explanations from the U.S. National Library of Medicine.
+          Explanations from the U.S. National Library of Medicine.
           Pick a body part, or search for anything.
         </p>
 
@@ -181,11 +178,6 @@ export default function LearnPage() {
             <span aria-hidden="true">→</span>
           </Link>
         </div>
-
-        <p className="mt-8 text-center text-xs text-muted">
-          Information from MedlinePlus.gov, a service of the U.S. National
-          Library of Medicine. Kenko is not endorsed by them.
-        </p>
       </div>
     </div>
   );

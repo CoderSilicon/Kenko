@@ -329,7 +329,6 @@ export default function KenkoWizard({
           disabled={step === 0}
           className="k-btn-ghost px-5 py-3 disabled:invisible"
         >
-          <span aria-hidden="true">←</span>
           Back
         </button>
 
@@ -368,12 +367,10 @@ export default function KenkoWizard({
           ) : step === TOTAL_STEPS - 1 ? (
             <span>
               Evaluate
-              <span aria-hidden="true"> {" →"}</span>
             </span>
           ) : (
             <span>
               Continue
-              <span aria-hidden="true"> {" →"}</span>
             </span>
           )}
         </button>

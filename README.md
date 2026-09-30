@@ -10,7 +10,6 @@ gives you one clear answer: what it might be, and what to do right now.
 It is built to be understandable. Short sentences, no jargon, and one idea at
 a time.
 
----
 
 ## What it does
 
@@ -43,51 +42,11 @@ so on) with a short plain description of each.
 Every result is saved, and you can add a daily check-in. A small chart shows
 whether you are getting better or worse.
 
----
 
-## Setup
-
-```bash
-npm install
-cp .env.example .env.local     # then paste in your GEMINI_API_KEY
-npm run dev
-```
-
-A free Gemini key is available from
-[Google AI Studio](https://aistudio.google.com/apikey). MedlinePlus needs no
-key and no registration.
-
-## Commands
-
-| Command | What it does |
-| --- | --- |
-| `npm run dev` | Start the dev server |
-| `npm run build` | Production build |
-| `npm start` | Run the production build |
-| `npm run lint` | Biome checks |
-
----
-
-## How it is put together
-
-| Path | What it holds |
-| --- | --- |
-| `app/api/evaluate` | Runs the red-flag scan, then the AI, then fetches reading |
-| `app/api/followup` | Re-runs the evaluation with the follow-up answers |
-| `app/api/learn` | Proxies the MedlinePlus Web service |
-| `lib/redflags.ts` | The emergency word scanner. Pure, no dependencies, easy to test |
-| `lib/medlineplus.ts` | XML parsing, rate limiting, cache lookups |
-| `lib/db.ts` | The SQLite cache (24 hour expiry) |
-| `lib/bodyAreas.ts` | The body areas on the Learn page, mapped to MedlinePlus groups |
-
-### The SQLite cache
+### The Cache
 
 NLM asks every client to stay under 85 requests per minute and to cache
-responses for 12 to 24 hours. Kenko does both: `lib/medlineplus.ts` caps itself
-at 60 requests a minute, and every response is stored in a local SQLite file
-for 24 hours. The file lives in `./data/` and is gitignored. If the database
-cannot be opened, the app logs a warning and carries on uncached rather than
-breaking.
+responses for 12 to 24 hours.
 
 Your journal is kept in your browser's local storage. It never leaves your
 device and is not sent to the server.

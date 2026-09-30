@@ -2,10 +2,7 @@ import "server-only";
 import { type MedlineTopic, searchMedline } from "./medlineplus";
 import type { Differential, LearnLink } from "./types";
 
-/**
- * Turns a list of possible conditions into trusted MedlinePlus reading.
- * Runs a few searches at once and drops anything that adds nothing.
- */
+
 export async function learnLinksFor(
   differentials: Differential[],
   limit = 3,

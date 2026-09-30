@@ -74,13 +74,6 @@ export default function EvaluatePage() {
     <div className="animate-in fade-in">
       <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6 md:py-14">
         <div className="mb-8">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 text-sm link"
-          >
-            <span aria-hidden="true">←</span>
-            Home
-          </Link>
           <h1 className="mt-3 text-2xl font-semibold tracking-tight md:text-3xl">
             Tell us what is going on
           </h1>
