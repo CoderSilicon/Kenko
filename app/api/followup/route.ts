@@ -67,7 +67,7 @@ Use the answers to firm up or correct your first pass.`;
 
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({
-      model: "gemini-3.5-flash-lite",
+      model: "gemini-3.8-flash",
       systemInstruction: `${KENKO_SYSTEM_PROMPT}\n${REFINEMENT_INSTRUCTIONS}\n\n${OUTPUT_SHAPE_NOTE}`,
     });
 
