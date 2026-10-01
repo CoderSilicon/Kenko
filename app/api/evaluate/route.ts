@@ -86,8 +86,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Step 1: word-based safety scan. Runs first, on its own, so a scary
-    // symptom can never slip through because of how the AI answered.
     const rawText = [
       symptoms,
       (formData.get("skinContext") as string) ?? "",
@@ -95,10 +93,9 @@ export async function POST(request: Request) {
     ].join(" . ");
     const redFlags = scanRedFlags(rawText);
 
-    // Step 2: ask the AI.
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({
-      model: "gemini-3.5-flash-lite",
+      model: "gemini-3.8-flash",
       systemInstruction: `${KENKO_SYSTEM_PROMPT}\n\n${OUTPUT_SHAPE_NOTE}`,
     });
 
@@ -120,10 +117,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // A hard red flag always wins over whatever the AI decided.
     parsed = applyRedFlagOverride(parsed, redFlags);
-
-    // Step 3: trusted reading. If this fails we still return the result.
     let learn: LearnLink[] = [];
     try {
       learn = await learnLinksFor(parsed.differential_analysis ?? [], 3);
